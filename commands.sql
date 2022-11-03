@@ -9,9 +9,11 @@ ALTER TABLE
 ADD COLUMN departmentName VARCHAR(100) NOT NULL;
 
 
-CREATE TABLE departments (
+CREATE TABLE journalEntry (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(3)
+    title VARCHAR(50),
+    message VARCHAR(3000),
+    date VARCHAR(30)
 );
 
 CREATE TABLE employee(firstName VARCHAR(28),lastName VARCHAR(28),jobTitle VARCHAR(28),department VARCHAR(28),salary VARCHAR(12),manager VARCHAR(28));

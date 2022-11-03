@@ -6,12 +6,12 @@ const Department=require('./lib/Department');
 const Employee=require('./lib/Employee');
 const Role=require('./lib/Role');
 const cTable = require('console.table');
-const connection = mysql.createConnection({
+/*const connection = mysql.createConnection({
   host: 'localhost',
   user:'root',
   password: 'Elemen1!',
   database: 'companyInfo',
-}).promise();
+}).promise();*/
 const PORT = process.env.PORT || 3001;
 const app = express();
 function whatWouldYouLike(){
@@ -69,9 +69,10 @@ function whatWouldYouLike(){
         if(wwyl==='T'){
             printTables();
         }
-      console.log("here");
+     
       
     })}
+  
 
 
 
@@ -246,7 +247,7 @@ function addEmployee(){
         {
     
             name: 'role',
-            message: 'What is the employees role?',
+            message: 'What is the employees role ID?',
             type: 'input'
     
     
@@ -256,32 +257,13 @@ function addEmployee(){
         {
     
             name: 'manager',
-            message: 'Who is the employees manager?',
+            message: 'Who is the employees manager ID?',
             type: 'input'
     
     
     
     
-        },   {
-    
-            name: 'department',
-            message: 'Who department is this employee in?',
-            type: 'input'
-    
-    
-    
-    
-        },{
-    
-            name: 'salary',
-            message: 'Who is the employees salary?',
-            type: 'input'
-    
-    
-    
-    
-        },
-    
+        },  
     
     
     
@@ -291,10 +273,10 @@ function addEmployee(){
         .then(function (answer) {
           var firstName=answer.firstName;
           var lastName= answer.lastName;
-          var role=answer.role;
-          var department= answer.department;
-          var manager=answer.manager;
-          var salary=answer.salary;
+          var roleId=answer.role;
+          
+          var managerId=answer.manager;
+          
           const dbEmployee = mysql.createConnection(
             {
               host: 'localhost',
@@ -302,14 +284,14 @@ function addEmployee(){
               user: 'root',
               // Your MySQL password
               password: 'Element1!',
-              database: 'employee'
+              database: 'companyInfo'
             },
             console.log('Connected to the employee database.')
           );
             // Create a candidate
-  const sql = `INSERT INTO employee (firstName, lastName,jobTitle ,department,salary,manager) 
-  VALUES (?,?,?,?,?,?)`;
-const params = [firstName, lastName,role,department,salary,manager];
+  const sql = `INSERT INTO employee (firstName, lastName,role_id ,managerId) 
+  VALUES (?,?,?,?)`;
+const params = [firstName, lastName,roleId,managerId];
 
 dbEmployee.query(sql, params, (err, result) => {
 if (err) {
@@ -354,7 +336,7 @@ function viewAllDepartments(){
       user: 'root',
       // Your MySQL password
       password: 'Element1!',
-      database: 'department'
+      database: 'companyInfo'
     },
    // console.log('Connected to the employee database.')
   );
@@ -369,8 +351,45 @@ dbRole.query(`SELECT * FROM department`, (err, rows) => {
 
 }
 function viewAllEmployees(){
+  var employeeDbInit={};
+  const dbEmployee = mysql.createConnection(
+    {
+      host: 'localhost',
+      // Your MySQL username,
+      user: 'root',
+      // Your MySQL password
+      password: 'Element1!',
+      database: 'companyInfo'
+    },
+   // console.log('Connected to the employee database.')
+  );
+    // Create a candidate
 
+    const dbEmployee2 = mysql.createConnection(
+      {
+        host: 'localhost',
+        // Your MySQL username,
+        user: 'root',
+        // Your MySQL password
+        password: 'Element1!',
+        database: 'companyInfo'
+      },
+     // console.log('Connected to the employee database.')
+    );
+dbEmployee.query(`SELECT * FROM employee INNER JOIN role
+ON employee.role_id=role.id INNER JOIN department ON role.department_id=department.id `, (err, rows) => {
+  console.log('Employees');
+  console.table(rows);
+
+
+                                                                                                                                                                                                
+  
+  
+
+});
 }
+
+
 function updateEmployeeRole(){
   const dbRole = mysql.createConnection(
     {
@@ -379,7 +398,7 @@ function updateEmployeeRole(){
       user: 'root',
       // Your MySQL password
       password: 'Element1!',
-      database: 'role'
+      database: 'companyInfo'
     },
    // console.log('Connected to the employee database.')
   );
@@ -422,14 +441,14 @@ function viewAllRoles(){
       user: 'root',
       // Your MySQL password
       password: 'Element1!',
-      database: 'role'
+      database: 'companyInfo'
     },
    // console.log('Connected to the employee database.')
   );
     // Create a candidate
 
 
-dbRole.query(`SELECT * FROM employeeroles`, (err, rows) => {
+dbRole.query(`SELECT * FROM role`, (err, rows) => {
   console.log('Roles')
   console.table(rows);
 });
